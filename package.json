@@ -2,6 +2,9 @@
   "name": "mercury-api",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "author": "Pedro Coelho <punnie@ethereal.io>",
   "license": "MIT",
   "dependencies": {
