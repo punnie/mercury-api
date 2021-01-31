@@ -1,0 +1,7 @@
+---
+
+- name: "restart app"
+  systemd:
+    name: mercury-api
+    state: restarted
+    daemon_reload: yes

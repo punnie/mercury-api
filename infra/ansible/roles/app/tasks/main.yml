@@ -1,0 +1,132 @@
+---
+
+- name: "ensure app user account"
+  user:
+    name: "mercury-api"
+    system: true
+    create_home: false
+    shell: /usr/bin/false
+
+- name: "ensure yarn apt repository key"
+  apt_key:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+    state: present
+
+- name: "ensure yarn apt repository presence"
+  apt_repository:
+    repo: deb https://dl.yarnpkg.com/debian/ stable main
+    state: present
+
+- name: "ensure javascript runtime"
+  apt:
+    update_cache: true
+    state: present
+    name:
+      - yarn
+
+- name: "ensure staging area"
+  file:
+    path: /srv/mercury-api
+    state: directory
+    owner: mercury-api
+    group: mercury-api
+    mode: 0755
+
+- name: "ensure releases area"
+  file:
+    path: /srv/mercury-api/releases
+    state: directory
+    owner: mercury-api
+    group: mercury-api
+    mode: 0755
+
+- name: "fetch latest version"
+  git:
+    accept_hostkey: true
+    repo: git@github.com:punnie/mercury-api.git
+    version: master
+    dest: /srv/mercury-api/src
+    force: yes
+  tags:
+    - deploy
+
+- name: "register HEAD revision"
+  shell:
+    cmd: git log -1 --format=%h
+    chdir: /srv/mercury-api/src
+  register: git_revision_command_output
+  tags:
+    - deploy
+
+- set_fact:
+    git_revision: "{{ git_revision_command_output.stdout }}"
+  tags:
+    - deploy
+
+- name: "ensure release directory"
+  file:
+    path: /srv/mercury-api/releases/{{ git_revision }}
+    state: directory
+    owner: mercury-api
+    group: mercury-api
+    mode: 0755
+  tags:
+    - deploy
+
+- name: "compile application"
+  command:
+    cmd: bash -c "git archive --format=tar HEAD | tar xvf - -C /srv/mercury-api/releases/{{ git_revision }}"
+    chdir: /srv/mercury-api/src
+    creates: /srv/mercury-api/releases/{{ git_revision }}/mercury-api.jar
+  tags:
+    - deploy
+
+- name: "install dependencies"
+  yarn:
+    path: /srv/mercury-api/releases/{{ git_revision }}
+
+- name: "point current release to this revision"
+  file:
+    state: link
+    path: /srv/mercury-api/releases/current
+    src: /srv/mercury-api/releases/{{ git_revision }}
+  notify:
+    - restart app
+  tags:
+    - deploy
+
+- name: "force ownership of application directory to user"
+  file:
+    path: /srv/mercury-api
+    state: directory
+    owner: mercury-api
+    group: mercury-api
+    recurse: yes
+  tags:
+    - deploy
+    
+- name: "nginx app config"
+  template:
+    src: "mercury-api.nginx.j2"
+    dest: "/etc/nginx/sites-available/mercury-api"
+  tags:
+    - deploy
+
+- name: "nginx link app config"
+  file:
+    dest: "/etc/nginx/sites-enabled/mercury-api"
+    src: "/etc/nginx/sites-available/mercury-api"
+    state: link
+  notify:
+    - restart nginx
+  tags:
+    - deploy
+
+- name: "systemd app config"
+  template:
+    src: "mercury-api.service.j2"
+    dest: "/etc/systemd/system/mercury-api.service"
+  notify:
+    - restart app
+  tags:
+    - deploy
