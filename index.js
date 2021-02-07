@@ -1,22 +1,27 @@
-var express = require('express');
-var mercury = require('@postlight/mercury-parser');
-var port = process.env.PORT || 3000;
+const express = require('express');
+const mercury = require('@postlight/mercury-parser');
+const port = process.env.PORT || 3000;
 
-var app = express();
+const app = express();
+app.use(express.json());
 
-app.get('/', function (req, res) {
-  var url = req.query.url;
+app.post('/content', function (req, res) {
+  const body = req.body;
+  const url = body.url;
+  const userAgent = body.user_agent ||  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0';
 
   if(url) {
     console.log(`Fetching '${url}'`);
+    console.log(`Using user-agent '${userAgent}'`);
 
-    mercury.parse(req.query.url, {
+    mercury.parse(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'
+        'User-Agent': userAgent
       }
     }).then(result => res.send(result));
   } else {
     console.log(`URL can't be empty!`);
+    res.send({error: "URL can't be empty!"});
   }
 });
 
