@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const express = require('express');
 const mercury = require('@postlight/mercury-parser');
 const port = process.env.PORT || 3000;

@@ -1,5 +1,0 @@
-#!/bin/bash
-
-BASEDIR=$(dirname "$0")
-
-ansible-playbook "${BASEDIR}/ansible/mercury-api.yml" -i "${BASEDIR}/ansible/inventories/production" --tags "deploy"

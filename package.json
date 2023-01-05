@@ -8,7 +8,10 @@
   "author": "Pedro Coelho <punnie@ethereal.io>",
   "license": "MIT",
   "dependencies": {
-    "@postlight/mercury-parser": "git://github.com/punnie/mercury-parser#add-custom-extractors",
+    "@postlight/mercury-parser": "github:punnie/mercury-parser#add-custom-extractors",
     "express": "^4.16.4"
+  },
+  "bin": {
+    "mercury-api": "./index.js"
   }
 }

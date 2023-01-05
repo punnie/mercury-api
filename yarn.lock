@@ -18,9 +18,9 @@
     dotenv "^6.2.0"
     node-fetch "^2.3.0"
 
-"@postlight/mercury-parser@git://github.com/punnie/mercury-parser#add-custom-extractors":
+"@postlight/mercury-parser@github:punnie/mercury-parser#add-custom-extractors":
   version "2.2.0"
-  resolved "git://github.com/punnie/mercury-parser#3a4d517823ecf859a3afd40d5f9b6fab758a7810"
+  resolved "https://codeload.github.com/punnie/mercury-parser/tar.gz/3a4d517823ecf859a3afd40d5f9b6fab758a7810"
   dependencies:
     "@babel/runtime-corejs2" "^7.2.0"
     "@postlight/ci-failed-test-reporter" "^1.0"
