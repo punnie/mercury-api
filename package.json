@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@postlight/mercury-parser": "github:punnie/mercury-parser#add-custom-extractors",
-    "express": "^4.16.4"
+    "express": "^4.17.3"
   },
   "bin": {
     "mercury-api": "./index.js"
