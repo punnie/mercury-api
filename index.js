@@ -27,6 +27,11 @@ app.post('/content', function (req, res) {
   }
 });
 
-app.listen(port, function () {
+const server = app.listen(port, function () {
   console.log(`Mercury API listening on port ${port}!`);
+});
+
+process.on('SIGTERM', function() {
+  console.log("SIGTERM received! Mercury API shutting down...")
+  server.close();
 });
