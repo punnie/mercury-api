@@ -10,7 +10,7 @@ app.use(express.json());
 app.post('/content', function (req, res) {
   const body = req.body;
   const url = body.url;
-  const userAgent = body.user_agent ||  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0';
+  const userAgent = body.user_agent || 'GoogleBot';
 
   if(url) {
     console.log(`Fetching '${url}'`);
