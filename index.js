@@ -20,10 +20,11 @@ app.post('/content', function (req, res) {
       headers: {
         'User-Agent': userAgent
       }
-    }).then(result => res.send(result));
+    }).then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   } else {
     console.log(`URL can't be empty!`);
-    res.send({error: "URL can't be empty!"});
+    res.status(400).send({error: "URL can't be empty!"});
   }
 });
 
